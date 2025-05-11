@@ -17,4 +17,5 @@ config/dev.yaml
 # vendor/
 .idea
 proto_deps
+data/sqlite/redzino_bot.db
 
