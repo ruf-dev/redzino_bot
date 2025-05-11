@@ -3,6 +3,7 @@
 package app
 
 import (
+	"github.com/ruf-dev/redzino_bot/internal/clients/sqldb"
 	"github.com/ruf-dev/redzino_bot/internal/clients/telegram"
 	"go.redsock.ru/rerrors"
 )
@@ -11,6 +12,11 @@ func (a *App) InitDataSources() (err error) {
 	a.Telegram, err = telegram.New(a.Cfg.DataSources.Telegram)
 	if err != nil {
 		return rerrors.Wrap(err, "error during telegram bot initialization")
+	}
+
+	a.Sqlite, err = sqldb.New(a.Cfg.DataSources.Sqlite)
+	if err != nil {
+		return rerrors.Wrap(err, "error during sql connection initialization")
 	}
 
 	return nil

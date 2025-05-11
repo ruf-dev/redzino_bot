@@ -5,6 +5,9 @@ app_info:
 data_sources:
     - resource_name: telegram
       api_key: ""
+    - resource_name: sqlite
+      path: ./data/sqlite/redzino_bot.db
+      migrations_folder: ./migrations
 environment:
     - name: log_level
       type: string
