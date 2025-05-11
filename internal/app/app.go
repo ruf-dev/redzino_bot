@@ -21,7 +21,7 @@ type App struct {
 	Cfg  config.Config
 	/* Data source connection */
 	Telegram *go_tg.Bot
-	Sqlite   *sql.DB
+	Postgres *sql.DB
 
 	Custom Custom
 }
