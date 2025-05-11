@@ -8,7 +8,7 @@ import (
 	"go.redsock.ru/rerrors"
 	"go.redsock.ru/toolbox/closer"
 
-	"github.com/ruf/redzino_bot/internal/config"
+	"github.com/ruf-dev/redzino_bot/internal/config"
 )
 
 func (a *App) InitConfig() (err error) {

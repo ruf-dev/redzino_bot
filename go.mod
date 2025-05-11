@@ -1,4 +1,4 @@
-module github.com/ruf/redzino_bot
+module github.com/ruf-dev/redzino_bot
 
 go 1.24.2
 

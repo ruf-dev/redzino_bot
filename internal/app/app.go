@@ -10,7 +10,7 @@ import (
 	"go.redsock.ru/toolbox/closer"
 	"golang.org/x/sync/errgroup"
 
-	"github.com/ruf/redzino_bot/internal/config"
+	"github.com/ruf-dev/redzino_bot/internal/config"
 )
 
 type App struct {

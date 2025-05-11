@@ -1,5 +1,5 @@
 app_info:
-    name: github.com/ruf/redzino_bot
+    name: github.com/ruf-dev/redzino_bot
     version: v0.0.1
     startup_duration: 10s
 environment:

@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/sirupsen/logrus"
 
-	"github.com/ruf/redzino_bot/internal/app"
+	"github.com/ruf-dev/redzino_bot/internal/app"
 )
 
 func main() {
