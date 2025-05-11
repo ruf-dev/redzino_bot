@@ -6,6 +6,8 @@ import (
 	client "github.com/Red-Sock/go_tg"
 
 	"github.com/ruf-dev/redzino_bot/internal/config"
+	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/balance"
+	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/defaulthandler"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/version"
 )
 
@@ -20,7 +22,9 @@ func NewServer(cfg config.Config, bot *client.Bot) (s *Server) {
 
 	{
 		// Add handlers here
-		s.bot.AddCommandHandler(version.New(cfg))
+		s.bot.AddCommandHandler(version.New(cfg.AppInfo.Version))
+		s.bot.AddCommandHandler(balance.New(cfg.AppInfo.Version))
+		s.bot.SetDefaultCommandHandler(defaulthandler.New())
 	}
 
 	return s

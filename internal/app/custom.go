@@ -5,23 +5,27 @@ package app
 
 import (
 	"context"
+
+	"github.com/ruf-dev/redzino_bot/internal/transport/telegram"
 )
 
-type Custom struct{}
+type Custom struct {
+	tg *telegram.Server
+}
 
 func (c *Custom) Init(a *App) error {
-	// Repository, Service logic, transport registration happens here
+	c.tg = telegram.NewServer(a.Cfg, a.Telegram)
 	return nil
 }
 
 // Start - launch custom handlers
 // Even if you won't use it keep it for proper work
 func (c *Custom) Start(ctx context.Context) error {
-	return nil
+	return c.tg.Start(ctx)
 }
 
 // Stop - gracefully stop custom handlers
 // Even if you won't use it keep it for proper work
 func (c *Custom) Stop() error {
-	return nil
+	return c.tg.Stop(nil)
 }

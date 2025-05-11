@@ -7,13 +7,13 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	go.redsock.ru/rerrors v0.0.3
 	go.redsock.ru/toolbox v0.0.10
-	go.vervstack.ru/matreshka v1.0.63
+	go.vervstack.ru/matreshka v1.0.65
 	golang.org/x/sync v0.14.0
 )
 
 require (
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1 // indirect
-	go.redsock.ru/evon v0.0.20 // indirect
+	go.redsock.ru/evon v0.0.22 // indirect
 	golang.org/x/sys v0.33.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250505200425-f936aa4a68b2 // indirect
 	google.golang.org/grpc v1.72.0 // indirect

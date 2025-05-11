@@ -1,4 +1,4 @@
-package version
+package balance
 
 import (
 	tgapi "github.com/Red-Sock/go_tg/interfaces"
@@ -6,7 +6,7 @@ import (
 	"github.com/Red-Sock/go_tg/model/response"
 )
 
-const Command = "/version"
+const Command = "/balance"
 
 type Handler struct {
 	version string
@@ -18,14 +18,14 @@ func New(version string) *Handler {
 	}
 }
 
-func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
-	return out.SendMessage(response.NewMessage(in.Text + ": " + h.version))
-}
-
 func (h *Handler) GetDescription() string {
-	return "returns current app version as a response"
+	return "Показать баланс"
 }
 
 func (h *Handler) GetCommand() string {
 	return Command
+}
+
+func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
+	return out.SendMessage(response.NewMessage("Ноль нахуй"))
 }
