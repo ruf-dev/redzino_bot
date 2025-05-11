@@ -1,4 +1,4 @@
-package sqlitedb
+package db
 
 import (
 	"context"
@@ -19,7 +19,7 @@ func NewUserProvider(db *sql.DB) *UserProvider {
 	}
 }
 
-func (p *UserProvider) Insert(ctx context.Context, data domain.User) (out domain.User, err error) {
+func (p *UserProvider) Create(ctx context.Context, data domain.User) (out domain.User, err error) {
 	err = p.db.QueryRowContext(ctx, `
 		INSERT INTO users 
 			   (tg_id)
@@ -27,7 +27,7 @@ func (p *UserProvider) Insert(ctx context.Context, data domain.User) (out domain
 		RETURNING tg_id`, data.TgId).
 		Scan(&out.TgId)
 	if err != nil {
-		return out, rerrors.Wrap(err, "error upserting user")
+		return out, wrapPgError(err)
 	}
 
 	return out, nil

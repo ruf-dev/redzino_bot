@@ -3,8 +3,8 @@
 CREATE TABLE users
 (
     tg_id   INTEGER PRIMARY KEY,
-    balance INTEGER
-)
+    balance INTEGER NOT NULL
+);
 -- +goose StatementEnd
 
 -- +goose Down

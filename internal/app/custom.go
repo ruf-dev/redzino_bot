@@ -6,20 +6,26 @@ package app
 import (
 	"context"
 
+	"github.com/ruf-dev/redzino_bot/internal/service"
+	"github.com/ruf-dev/redzino_bot/internal/service/servicev1"
 	"github.com/ruf-dev/redzino_bot/internal/storage"
-	"github.com/ruf-dev/redzino_bot/internal/storage/sqlitedb"
+	"github.com/ruf-dev/redzino_bot/internal/storage/db"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram"
 )
 
 type Custom struct {
-	db storage.Data
+	db  storage.Data
+	srv service.Service
+
 	tg *telegram.Server
 }
 
 func (c *Custom) Init(a *App) error {
-	c.db = sqlitedb.NewProvider(a.Sqlite)
+	c.db = db.NewProvider(a.Postgres)
 
-	c.tg = telegram.NewServer(a.Cfg, a.Telegram)
+	c.srv = servicev1.NewService(c.db)
+
+	c.tg = telegram.NewServer(a.Cfg, a.Telegram, c.srv)
 	return nil
 }
 
