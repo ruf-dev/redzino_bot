@@ -22,9 +22,9 @@ func NewUserProvider(db *sql.DB) *UserProvider {
 func (p *UserProvider) Create(ctx context.Context, data domain.User) (out domain.User, err error) {
 	err = p.db.QueryRowContext(ctx, `
 		INSERT INTO users 
-			   (tg_id)
-		VALUES (   $1)
-		RETURNING tg_id`, data.TgId).
+			   (tg_id, balance)
+		VALUES (   $1,      $2)
+		RETURNING tg_id`, data.TgId, data.Balance).
 		Scan(&out.TgId)
 	if err != nil {
 		return out, wrapPgError(err)
@@ -33,8 +33,8 @@ func (p *UserProvider) Create(ctx context.Context, data domain.User) (out domain
 	return out, nil
 }
 
-func (p *UserProvider) Get(ctx context.Context, tgId string) (user domain.User, err error) {
-	err = p.db.QueryRow(`
+func (p *UserProvider) Get(ctx context.Context, tgId int64) (user domain.User, err error) {
+	err = p.db.QueryRowContext(ctx, `
 		SELECT
 		    tg_id,
 		    balance
@@ -49,4 +49,25 @@ func (p *UserProvider) Get(ctx context.Context, tgId string) (user domain.User, 
 	}
 
 	return user, nil
+}
+
+func (p *UserProvider) Inc(ctx context.Context, tgId int64, price int) error {
+	return p.updateBalance(ctx, tgId, price)
+}
+
+func (p *UserProvider) Decrease(ctx context.Context, tgId int64) error {
+	return p.updateBalance(ctx, tgId, -1)
+}
+
+func (p *UserProvider) updateBalance(ctx context.Context, tgId int64, balanceChange int) error {
+	_, err := p.db.ExecContext(ctx, `
+		UPDATE users 
+		SET balance = balance + $1
+		WHERE tg_id = $2`,
+		balanceChange, tgId)
+	if err != nil {
+		return wrapPgError(err)
+	}
+
+	return nil
 }

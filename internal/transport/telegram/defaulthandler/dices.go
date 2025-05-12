@@ -2,6 +2,8 @@ package defaulthandler
 
 import (
 	"go.redsock.ru/toolbox"
+
+	"github.com/ruf-dev/redzino_bot/internal/domain"
 )
 
 var (
@@ -10,20 +12,16 @@ var (
 
 const (
 	jackpotVal = 64
-
-	loss = iota
-	fruit
-	jackpot
 )
 
-func getPrice(val int) int {
+func getPrice(val int) domain.RollPrize {
 	if val == jackpotVal {
-		return jackpot
+		return domain.RollPrizeJackpot
 	}
 
 	if toolbox.Contains(fruitsVals, val) {
-		return fruit
+		return domain.RollPrizeFruit
 	}
 
-	return loss
+	return domain.RollPrizeUnLuck
 }

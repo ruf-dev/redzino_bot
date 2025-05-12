@@ -7,34 +7,54 @@ import (
 	tgapi "github.com/Red-Sock/go_tg/interfaces"
 	"github.com/Red-Sock/go_tg/model"
 	"github.com/Red-Sock/go_tg/model/response"
+	"go.redsock.ru/rerrors"
+
+	"github.com/ruf-dev/redzino_bot/internal/domain"
+	"github.com/ruf-dev/redzino_bot/internal/service"
 )
 
 type Handler struct {
-	version string
+	userService service.UserService
 }
 
-func New() *Handler {
-	return &Handler{}
+func New(srv service.Service) *Handler {
+	return &Handler{
+		userService: srv.UserService(),
+	}
 }
 
-func (h *Handler) Handle(req *model.MessageIn, out tgapi.Chat) error {
-	if req.Dice == nil {
+func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
+	if in.Dice == nil {
 		return nil
 	}
 
 	runtime.Gosched()
 	time.Sleep(1700 * time.Millisecond)
 
-	price := getPrice(req.Dice.Value)
+	var messageOut *response.MessageOut
+
+	price := getPrice(in.Dice.Value)
 	switch price {
-	case jackpotVal:
-		return out.SendMessage(response.NewMessage("Грабанул, красавчик!"))
-	case fruit:
-		return out.SendMessage(response.NewMessage("Лови фруктик"))
-	default:
-		return out.SendMessage(response.NewMessage("В следующий раз"))
+	case domain.RollPrizeJackpot:
+		messageOut = response.NewMessage("Грабанул, красавчик!")
+	case domain.RollPrizeFruit:
+		messageOut = response.NewMessage("Лови фруктик")
 	}
 
+	roll := domain.BalanceChange{
+		TgId:       in.From.ID,
+		RollResult: price,
+	}
+
+	err := h.userService.AccountRoll(in.Ctx, roll)
+	if err != nil {
+		return rerrors.Wrap(err)
+	}
+
+	if messageOut != nil {
+		return out.SendMessage(messageOut)
+	}
+	return nil
 }
 
 func (h *Handler) GetDescription() string {

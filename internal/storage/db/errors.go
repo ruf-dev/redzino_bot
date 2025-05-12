@@ -5,12 +5,6 @@ import (
 
 	"github.com/lib/pq"
 	"go.redsock.ru/rerrors"
-
-	"github.com/ruf-dev/redzino_bot/internal/storage"
-)
-
-const (
-	errCodeDuplicate = "23502"
 )
 
 func wrapPgError(err error) error {
@@ -21,9 +15,7 @@ func wrapPgError(err error) error {
 	}
 
 	switch pgerr.Code {
-	case errCodeDuplicate:
-		return rerrors.Wrap(storage.ErrDuplicated, err.Error())
+	default:
+		return rerrors.Wrap(err)
 	}
-
-	return err
 }

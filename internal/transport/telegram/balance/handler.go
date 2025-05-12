@@ -4,18 +4,25 @@ import (
 	tgapi "github.com/Red-Sock/go_tg/interfaces"
 	"github.com/Red-Sock/go_tg/model"
 	"github.com/Red-Sock/go_tg/model/response"
+
+	"github.com/ruf-dev/redzino_bot/internal/service"
 )
 
 const Command = "/balance"
 
 type Handler struct {
-	version string
+	userService service.UserService
 }
 
-func New(version string) *Handler {
+func New(srv service.Service) *Handler {
 	return &Handler{
-		version: version,
+		userService: srv.UserService(),
 	}
+}
+
+func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
+	h.userService.GetBalance(in.Ctx, in.From.ID)
+	return out.SendMessage(response.NewMessage("Ноль нахуй"))
 }
 
 func (h *Handler) GetDescription() string {
@@ -24,8 +31,4 @@ func (h *Handler) GetDescription() string {
 
 func (h *Handler) GetCommand() string {
 	return Command
-}
-
-func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
-	return out.SendMessage(response.NewMessage("Ноль нахуй"))
 }

@@ -25,11 +25,10 @@ func NewServer(cfg config.Config, bot *client.Bot, srv service.Service) (s *Serv
 	{
 		// Add handlers here
 		s.bot.AddCommandHandler(version.New(cfg.AppInfo.Version))
-
 		s.bot.AddCommandHandler(start.New(srv))
-		s.bot.AddCommandHandler(balance.New(cfg.AppInfo.Version))
+		s.bot.AddCommandHandler(balance.New(srv))
 
-		s.bot.SetDefaultCommandHandler(defaulthandler.New())
+		s.bot.SetDefaultCommandHandler(defaulthandler.New(srv))
 	}
 
 	return s
