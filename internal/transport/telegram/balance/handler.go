@@ -1,9 +1,12 @@
 package balance
 
 import (
+	"fmt"
+
 	tgapi "github.com/Red-Sock/go_tg/interfaces"
 	"github.com/Red-Sock/go_tg/model"
 	"github.com/Red-Sock/go_tg/model/response"
+	"go.redsock.ru/rerrors"
 
 	"github.com/ruf-dev/redzino_bot/internal/service"
 )
@@ -21,8 +24,12 @@ func New(srv service.Service) *Handler {
 }
 
 func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
-	h.userService.GetBalance(in.Ctx, in.From.ID)
-	return out.SendMessage(response.NewMessage("Ноль нахуй"))
+	balance, err := h.userService.GetBalance(in.Ctx, in.From.ID)
+	if err != nil {
+		return rerrors.Wrap(err)
+	}
+
+	return out.SendMessage(response.NewMessage(fmt.Sprintf("Общий баланс: %d фишек", balance.Total)))
 }
 
 func (h *Handler) GetDescription() string {
