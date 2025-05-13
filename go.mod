@@ -9,7 +9,7 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	go.redsock.ru/rerrors v0.0.3
 	go.redsock.ru/toolbox v0.0.10
-	go.vervstack.ru/matreshka v1.0.65
+	go.vervstack.ru/matreshka v1.0.66
 	golang.org/x/sync v0.14.0
 )
 
@@ -24,9 +24,4 @@ require (
 	google.golang.org/grpc v1.72.0 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-)
-
-
-replace (
-	go.vervstack.ru/matreshka => /Users/alexbukov/Yandex.Disk.localized/проекты/verv/Matreshka/Matreshka
 )
