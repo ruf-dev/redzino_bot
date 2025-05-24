@@ -22,10 +22,6 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 	return out.SendMessage(response.NewMessage(in.Text + ": " + h.version))
 }
 
-func (h *Handler) GetDescription() string {
-	return "returns current app version as a response"
-}
-
 func (h *Handler) GetCommand() string {
 	return Command
 }

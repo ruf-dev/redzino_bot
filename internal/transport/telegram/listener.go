@@ -30,6 +30,8 @@ func NewServer(cfg config.Config, bot *client.Bot, srv service.Service) (s *Serv
 	uc := newUserCache()
 	{
 		s.bot.ExternalContext = func(in *model.MessageIn) context.Context {
+			in.Ctx = context.Background()
+
 			if uc.exists(in.From.ID) {
 				return in.Ctx
 			}

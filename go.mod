@@ -3,7 +3,7 @@ module github.com/ruf-dev/redzino_bot
 go 1.24.2
 
 require (
-	github.com/Red-Sock/go_tg v0.0.22
+	github.com/Red-Sock/go_tg v0.0.23
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.24.3
 	github.com/sirupsen/logrus v1.9.3

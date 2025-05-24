@@ -39,6 +39,8 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 		messageOut = response.NewMessage("Грабанул, красавчик!")
 	case domain.RollPrizeFruit:
 		messageOut = response.NewMessage("Лови фруктик")
+	case domain.RollPrizeUnLuck:
+		messageOut = nil
 	}
 
 	roll := domain.BalanceChange{
