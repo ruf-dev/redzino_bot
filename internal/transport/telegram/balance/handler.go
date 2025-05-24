@@ -29,7 +29,12 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 		return rerrors.Wrap(err)
 	}
 
-	return out.SendMessage(response.NewMessage(fmt.Sprintf("Общий баланс: %d фишек", balance.Total)))
+	outMessage := response.NewMessage(fmt.Sprintf("Общий баланс: %d фишек", balance.Total))
+	if in.Chat.ID != in.From.ID {
+		outMessage.ReplyMessageId = int64(in.MessageID)
+	}
+
+	return out.SendMessage(outMessage)
 }
 
 func (h *Handler) GetDescription() string {
