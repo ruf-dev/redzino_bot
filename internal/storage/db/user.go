@@ -24,6 +24,8 @@ func (p *UserProvider) Create(ctx context.Context, data domain.User) (out domain
 		INSERT INTO users 
 			   (tg_id, balance)
 		VALUES (   $1,      $2)
+		ON CONFLICT(tg_id)
+		DO UPDATE SET tg_id = excluded.tg_id
 		RETURNING tg_id`, data.TgId, data.Balance).
 		Scan(&out.TgId)
 	if err != nil {

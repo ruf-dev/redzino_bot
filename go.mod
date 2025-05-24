@@ -3,13 +3,13 @@ module github.com/ruf-dev/redzino_bot
 go 1.24.2
 
 require (
-	github.com/Red-Sock/go_tg v0.0.21
+	github.com/Red-Sock/go_tg v0.0.22
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.24.3
 	github.com/sirupsen/logrus v1.9.3
 	go.redsock.ru/rerrors v0.0.3
 	go.redsock.ru/toolbox v0.0.11
-	go.vervstack.ru/matreshka v1.0.70
+	go.vervstack.ru/matreshka v1.0.73
 	golang.org/x/sync v0.14.0
 )
 
