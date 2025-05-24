@@ -42,11 +42,6 @@ func (u *UserService) InitUser(ctx context.Context, tgId int64) error {
 }
 
 func (u *UserService) GetBalance(ctx context.Context, tgId int64) (domain.Balance, error) {
-	err := u.InitUser(ctx, tgId)
-	if err != nil {
-		return domain.Balance{}, rerrors.Wrap(err)
-	}
-
 	user, err := u.userStorage.Get(ctx, tgId)
 	if err != nil {
 		return domain.Balance{}, rerrors.Wrap(err, "error getting user from storage")
