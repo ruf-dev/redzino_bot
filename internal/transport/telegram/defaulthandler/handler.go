@@ -57,6 +57,7 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 	}
 
 	if messageOut != nil {
+		messageOut.ReplyMessageId = int64(in.MessageID)
 		return out.SendMessage(messageOut)
 	}
 	return nil
