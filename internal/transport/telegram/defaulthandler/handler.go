@@ -28,19 +28,22 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 		return nil
 	}
 
+	price := getPrice(in.Dice.Value)
+
+	if price == domain.RollPrizeUnLuck {
+		return nil
+	}
+
 	runtime.Gosched()
 	time.Sleep(1700 * time.Millisecond)
 
 	var messageOut *response.MessageOut
 
-	price := getPrice(in.Dice.Value)
 	switch price {
 	case domain.RollPrizeJackpot:
 		messageOut = response.NewMessage("Грабанул, красавчик!")
 	case domain.RollPrizeFruit:
 		messageOut = response.NewMessage("Лови фруктик")
-	case domain.RollPrizeUnLuck:
-		messageOut = nil
 	}
 
 	roll := domain.BalanceChange{
