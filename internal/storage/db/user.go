@@ -58,7 +58,7 @@ func (p *UserProvider) Inc(ctx context.Context, tgId int64, price int) error {
 }
 
 func (p *UserProvider) Decrease(ctx context.Context, tgId int64) error {
-	return p.updateBalance(ctx, tgId, -1)
+	return p.updateBalance(ctx, tgId, -2)
 }
 
 func (p *UserProvider) updateBalance(ctx context.Context, tgId int64, balanceChange int) error {
