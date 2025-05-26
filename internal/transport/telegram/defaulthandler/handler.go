@@ -30,6 +30,16 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 
 	price := getPrice(in.Dice.Value)
 
+	roll := domain.BalanceChange{
+		TgId:       in.From.ID,
+		RollResult: price,
+	}
+
+	err := h.userService.AccountRoll(in.Ctx, roll)
+	if err != nil {
+		return rerrors.Wrap(err)
+	}
+
 	if price == domain.RollPrizeUnLuck {
 		return nil
 	}
@@ -44,16 +54,6 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 		messageOut = response.NewMessage("Грабанул, красавчик!")
 	case domain.RollPrizeFruit:
 		messageOut = response.NewMessage("Лови фруктик")
-	}
-
-	roll := domain.BalanceChange{
-		TgId:       in.From.ID,
-		RollResult: price,
-	}
-
-	err := h.userService.AccountRoll(in.Ctx, roll)
-	if err != nil {
-		return rerrors.Wrap(err)
 	}
 
 	if messageOut != nil {
