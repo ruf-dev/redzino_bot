@@ -7,11 +7,17 @@ import (
 
 type Service struct {
 	us *UserService
+	ms *MotivationService
+}
+
+func (s *Service) MotivationService() service.MotivationService {
+	return s.ms
 }
 
 func NewService(dataStorage storage.Data) *Service {
 	return &Service{
 		us: NewUserService(dataStorage),
+		ms: NewMotivationService(dataStorage),
 	}
 }
 

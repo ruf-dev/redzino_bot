@@ -7,15 +7,21 @@ import (
 )
 
 type Provider struct {
-	users *UserProvider
+	users       *UserProvider
+	motivations *MotivationsProvider
 }
 
 func NewProvider(db *sql.DB) *Provider {
 	return &Provider{
-		users: NewUserProvider(db),
+		users:       NewUserProvider(db),
+		motivations: NewMotivationsProvider(db),
 	}
 }
 
 func (p *Provider) Users() storage.Users {
 	return p.users
+}
+
+func (p *Provider) Motivations() storage.Motivations {
+	return p.motivations
 }

@@ -39,12 +39,14 @@ func (p *UserProvider) Get(ctx context.Context, tgId int64) (user domain.User, e
 	err = p.db.QueryRowContext(ctx, `
 		SELECT
 		    tg_id,
-		    balance
+		    balance,
+		    permission_bit_map
 		FROM users 
 		WHERE tg_id = $1`, tgId).
 		Scan(
 			&user.TgId,
 			&user.Balance,
+			&user.PermissionsBitMap,
 		)
 	if err != nil {
 		return user, rerrors.Wrap(err, "error reading user from database")

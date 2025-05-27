@@ -14,6 +14,7 @@ var (
 
 type Data interface {
 	Users() Users
+	Motivations() Motivations
 }
 
 type Users interface {
@@ -21,4 +22,8 @@ type Users interface {
 	Get(ctx context.Context, tgId int64) (domain.User, error)
 	Inc(ctx context.Context, id int64, price int) error
 	Decrease(ctx context.Context, id int64) error
+}
+
+type Motivations interface {
+	Save(ctx context.Context, motivation domain.Motivation) error
 }

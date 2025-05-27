@@ -13,6 +13,7 @@ import (
 	"github.com/ruf-dev/redzino_bot/internal/service"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/balance"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/defaulthandler"
+	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/motivate"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/start"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/version"
 )
@@ -49,7 +50,7 @@ func NewServer(cfg config.Config, bot *client.Bot, srv service.Service) (s *Serv
 		s.bot.AddCommandHandler(version.New(cfg.AppInfo.Version))
 		s.bot.AddCommandHandler(start.New(srv))
 		s.bot.AddCommandHandler(balance.New(srv))
-
+		s.bot.AddCommandHandler(motivate.New(srv))
 		s.bot.SetDefaultCommandHandler(defaulthandler.New(srv))
 	}
 
