@@ -44,13 +44,6 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 		return rerrors.Wrap(err)
 	}
 
-	textMessage := response.NewMessage("Время Дэпать!")
-	textMessage.ReplyMessageId = int64(videoMessage.MessageId)
-	err = out.SendMessage(textMessage)
-	if err != nil {
-		return rerrors.Wrap(err)
-	}
-
 	return nil
 }
 
