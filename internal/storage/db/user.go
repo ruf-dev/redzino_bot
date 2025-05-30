@@ -6,14 +6,16 @@ import (
 
 	"go.redsock.ru/rerrors"
 
+	"github.com/ruf-dev/redzino_bot/internal/clients/sqldb"
 	"github.com/ruf-dev/redzino_bot/internal/domain"
+	"github.com/ruf-dev/redzino_bot/internal/storage"
 )
 
 type UserProvider struct {
-	db *sql.DB
+	db sqldb.DB
 }
 
-func NewUserProvider(db *sql.DB) *UserProvider {
+func NewUserProvider(db sqldb.DB) *UserProvider {
 	return &UserProvider{
 		db: db,
 	}
@@ -74,4 +76,8 @@ func (p *UserProvider) updateBalance(ctx context.Context, tgId int64, balanceCha
 	}
 
 	return nil
+}
+
+func (p *UserProvider) WithTx(tx *sql.Tx) storage.Users {
+	return NewUserProvider(tx)
 }

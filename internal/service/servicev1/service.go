@@ -3,24 +3,31 @@ package servicev1
 import (
 	"github.com/ruf-dev/redzino_bot/internal/service"
 	"github.com/ruf-dev/redzino_bot/internal/storage"
+	"github.com/ruf-dev/redzino_bot/internal/storage/tx_manager"
 )
 
 type Service struct {
-	us *UserService
-	ms *MotivationService
+	userService       *UserService
+	motivationService *MotivationService
+	chatService       *ChatService
 }
 
 func (s *Service) MotivationService() service.MotivationService {
-	return s.ms
+	return s.motivationService
 }
 
-func NewService(dataStorage storage.Data) *Service {
+func NewService(dataStorage storage.Data, manager *tx_manager.TxManager) *Service {
 	return &Service{
-		us: NewUserService(dataStorage),
-		ms: NewMotivationService(dataStorage),
+		userService:       NewUserService(dataStorage),
+		motivationService: NewMotivationService(dataStorage, manager),
+		chatService:       NewChatService(dataStorage),
 	}
 }
 
 func (s *Service) UserService() service.UserService {
-	return s.us
+	return s.userService
+}
+
+func (s *Service) ChatService() service.ChatService {
+	return s.chatService
 }

@@ -9,6 +9,7 @@ import (
 type Service interface {
 	UserService() UserService
 	MotivationService() MotivationService
+	ChatService() ChatService
 }
 
 type UserService interface {
@@ -18,6 +19,11 @@ type UserService interface {
 }
 
 type MotivationService interface {
-	GetMotivation(ctx context.Context, chatId int64) (domain.Motivation, error)
+	GetMotivation(ctx context.Context, chatId int64) (*domain.Motivation, error)
 	Save(ctx context.Context, motivation domain.Motivation) (err error)
+}
+
+type ChatService interface {
+	InitChat(ctx context.Context, chatId int64) error
+	ToggleMute(ctx context.Context, id int64) error
 }

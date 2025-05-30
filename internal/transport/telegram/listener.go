@@ -14,6 +14,7 @@ import (
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/balance"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/defaulthandler"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/motivate"
+	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/mute"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/start"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/version"
 )
@@ -28,22 +29,34 @@ func NewServer(cfg config.Config, bot *client.Bot, srv service.Service) (s *Serv
 	}
 
 	//TODO RSI-303 replace onto interceptor
-	uc := newUserCache()
+	uc := newCache[int64, struct{}]()
+	chatCache := newCache[int64, struct{}]()
+
 	{
 		s.bot.ExternalContext = func(in *model.MessageIn) context.Context {
 			in.Ctx = context.Background()
 
-			if uc.exists(in.From.ID) {
-				return in.Ctx
+			if !uc.exists(in.From.ID) {
+
+				err := srv.UserService().InitUser(in.Ctx, in.From.ID)
+				if err != nil {
+					logrus.Error(rerrors.Wrap(err, "error initializing user"))
+					return in.Ctx
+				}
+
+				uc.add(in.From.ID, struct{}{})
 			}
 
-			err := srv.UserService().InitUser(in.Ctx, in.From.ID)
-			if err != nil {
-				logrus.Error(rerrors.Wrap(err, "error initializing user"))
-				return in.Ctx
+			if !chatCache.exists(in.Chat.ID) {
+				err := srv.ChatService().InitChat(in.Ctx, in.Chat.ID)
+				if err != nil {
+					logrus.Error(rerrors.Wrap(err, "error initializing chat"))
+					return in.Ctx
+				}
+
+				chatCache.add(in.Chat.ID, struct{}{})
 			}
 
-			uc.add(in.From.ID)
 			return in.Ctx
 		}
 		// Add handlers here
@@ -51,6 +64,8 @@ func NewServer(cfg config.Config, bot *client.Bot, srv service.Service) (s *Serv
 		s.bot.AddCommandHandler(start.New(srv))
 		s.bot.AddCommandHandler(balance.New(srv))
 		s.bot.AddCommandHandler(motivate.New(srv))
+		s.bot.AddCommandHandler(mute.New(srv))
+
 		s.bot.SetDefaultCommandHandler(defaulthandler.New(srv))
 	}
 
@@ -66,26 +81,26 @@ func (s *Server) Stop(_ context.Context) error {
 	return nil
 }
 
-type userCache struct {
-	users map[int64]struct{}
+type userCache[T comparable, V any] struct {
+	users map[T]V
 	sync.RWMutex
 }
 
-func newUserCache() *userCache {
-	return &userCache{
-		users: make(map[int64]struct{}),
+func newCache[T comparable, V any]() *userCache[T, V] {
+	return &userCache[T, V]{
+		users: make(map[T]V),
 	}
 }
 
-func (uc *userCache) add(id int64) {
+func (uc *userCache[T, V]) add(k T, v V) {
 	uc.Lock()
-	uc.users[id] = struct{}{}
+	uc.users[k] = v
 	uc.Unlock()
 }
 
-func (uc *userCache) exists(id int64) bool {
+func (uc *userCache[T, V]) exists(key T) bool {
 	uc.RLock()
-	_, ok := uc.users[id]
+	_, ok := uc.users[key]
 	uc.RUnlock()
 
 	return ok

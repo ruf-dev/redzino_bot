@@ -30,14 +30,23 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 		return rerrors.Wrap(err, "error when getting motivation")
 	}
 
-	msg := response.NewMessage("",
+	if motivation == nil {
+		return out.SendMessage(response.NewMessage("Больше видосов нет, хозяин :("))
+	}
+
+	videoMessage := response.NewMessage("",
 		response.WithMedia(media.Video{
 			FileID: motivation.TgFileId,
 		}))
 
-	msg.ReplyMessageId = int64(in.MessageID)
+	err = out.SendMessage(videoMessage)
+	if err != nil {
+		return rerrors.Wrap(err)
+	}
 
-	err = out.SendMessage(msg)
+	textMessage := response.NewMessage("Время Дэпать!")
+	textMessage.ReplyMessageId = int64(videoMessage.MessageId)
+	err = out.SendMessage(textMessage)
 	if err != nil {
 		return rerrors.Wrap(err)
 	}

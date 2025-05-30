@@ -10,6 +10,7 @@ import (
 	"github.com/ruf-dev/redzino_bot/internal/service/servicev1"
 	"github.com/ruf-dev/redzino_bot/internal/storage"
 	"github.com/ruf-dev/redzino_bot/internal/storage/db"
+	"github.com/ruf-dev/redzino_bot/internal/storage/tx_manager"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram"
 )
 
@@ -23,7 +24,9 @@ type Custom struct {
 func (c *Custom) Init(a *App) error {
 	c.db = db.NewProvider(a.Postgres)
 
-	c.srv = servicev1.NewService(c.db)
+	txManager := tx_manager.New(a.Postgres)
+
+	c.srv = servicev1.NewService(c.db, txManager)
 
 	c.tg = telegram.NewServer(a.Cfg, a.Telegram, c.srv)
 	return nil
