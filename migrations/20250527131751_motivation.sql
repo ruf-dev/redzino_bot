@@ -12,14 +12,14 @@ ALTER TABLE users
 
 CREATE TABLE IF NOT EXISTS chats
 (
-    tg_chat_id      INTEGER PRIMARY KEY,
+    tg_chat_id      BIGINT PRIMARY KEY,
     last_motivation TIMESTAMP,
     is_muted        BOOL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS motivation_queue
 (
-    tg_chat_id    INTEGER REFERENCES chats (tg_chat_id),
+    tg_chat_id    BIGINT REFERENCES chats (tg_chat_id),
     motivation_id INTEGER REFERENCES motivations (id),
     is_sent       BOOL,
     UNIQUE (tg_chat_id, motivation_id)

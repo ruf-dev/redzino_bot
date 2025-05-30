@@ -31,7 +31,9 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 	}
 
 	if motivation == nil {
-		return out.SendMessage(response.NewMessage("Больше видосов нет, хозяин :("))
+		msg := response.NewMessage("Видосов нет, хозяин :(")
+		msg.ReplyMessageId = int64(in.MessageID)
+		return out.SendMessage(msg)
 	}
 
 	videoMessage := response.NewMessage("",
