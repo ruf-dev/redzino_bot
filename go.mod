@@ -3,8 +3,7 @@ module github.com/ruf-dev/redzino_bot
 go 1.24.2
 
 require (
-	github.com/Red-Sock/go_tg v0.0.24
-	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1
+	github.com/Red-Sock/go_tg v0.0.25
 	github.com/lib/pq v1.10.9
 	github.com/pressly/goose/v3 v3.24.3
 	github.com/sirupsen/logrus v1.9.3
@@ -15,6 +14,7 @@ require (
 )
 
 require (
+	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.5.1 // indirect
 	github.com/mfridman/interpolate v0.0.2 // indirect
 	github.com/sethvargo/go-retry v0.3.0 // indirect
 	go.redsock.ru/evon v0.0.25 // indirect
@@ -24,8 +24,4 @@ require (
 	google.golang.org/grpc v1.72.2 // indirect
 	google.golang.org/protobuf v1.36.6 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-)
-
-replace (
-	github.com/Red-Sock/go_tg => /Users/alexbukov/redsock/go_tg
 )
