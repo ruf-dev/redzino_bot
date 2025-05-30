@@ -48,7 +48,7 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 }
 
 func (h *Handler) GetDescription() string {
-	return "Показать баланс"
+	return "Наполнится мотивацией"
 }
 
 func (h *Handler) GetCommand() string {

@@ -29,9 +29,9 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 	return nil
 }
 
-func (h *Handler) GetDescription() string {
-	return "Включить/выключить оповещения"
-}
+//func (h *Handler) GetDescription() string {
+//	return "Включить/выключить оповещения"
+//}
 
 func (h *Handler) GetCommand() string {
 	return Command

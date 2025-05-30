@@ -26,4 +26,5 @@ type MotivationService interface {
 type ChatService interface {
 	InitChat(ctx context.Context, chatId int64) error
 	ToggleMute(ctx context.Context, id int64) error
+	GetChat(ctx context.Context, chatId int64) (*domain.Chat, error)
 }

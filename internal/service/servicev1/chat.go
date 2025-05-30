@@ -43,3 +43,12 @@ func (c *ChatService) ToggleMute(ctx context.Context, chatId int64) error {
 
 	return nil
 }
+
+func (c *ChatService) GetChat(ctx context.Context, chatId int64) (*domain.Chat, error) {
+	chat, err := c.chatStorage.Get(ctx, chatId)
+	if err != nil {
+		return nil, rerrors.Wrap(err)
+	}
+
+	return &chat, nil
+}
