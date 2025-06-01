@@ -36,14 +36,6 @@ jobs:
     needs:
       - tag-release
     steps:
-      - name: Restore cache
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
       - name: Release image
         id: release-step
         if: ${{ needs.tag-release.outputs.tag != '' }}
@@ -52,8 +44,3 @@ jobs:
           REGISTRY_USER: ${{ vars.REGISTRY_USER }}
           REGISTRY_PWD:  ${{ secrets.REGISTRY_PWD }}
           REGISTRY_URL: docker.io
-
-      - name: Save updated cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
