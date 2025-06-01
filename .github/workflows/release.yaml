@@ -12,9 +12,11 @@ jobs:
       image-tar-name: ${{ steps.set-name.outputs.image_tar }}
     steps:
       - name: image-build
-        uses: RedSockActions/release_image@v1.0.24
+        uses: RedSockActions/release_image@v1.0.25
         with:
-          OUTPUT: file:.
+          DRYRUN: true
+          REGISTRY_USER: ${{ vars.REGISTRY_USER }}
+          REGISTRY_PWD:  ${{ secrets.REGISTRY_PWD }}
 
       - name: Set image filename output
         id: set-name
@@ -57,9 +59,8 @@ jobs:
 
       - name: Release image
         if: ${{ needs.tag-release.outputs.tag != '' }}
-        uses: RedSockActions/release_image@v1.0.24
+        uses: RedSockActions/release_image@v1.0.25
         with:
-          PREBUILT_IMAGE_PATH: ./${{ needs.build.outputs.image-tar-name }}
           REGISTRY_USER: ${{ vars.REGISTRY_USER }}
           REGISTRY_PWD:  ${{ secrets.REGISTRY_PWD }}
-          OUTPUT: registry:docker.io
+          REGISTRY_URL: registry:docker.io
