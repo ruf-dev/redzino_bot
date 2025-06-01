@@ -8,8 +8,6 @@ on:
 jobs:
   image-build:
     runs-on: ubuntu-24.04
-    outputs:
-      image-tar-name: ${{ steps.set-name.outputs.image_tar }}
     steps:
       - name: image-build
         uses: RedSockActions/release_image@v1.0.25
@@ -18,21 +16,6 @@ jobs:
           REGISTRY_USER: ${{ vars.REGISTRY_USER }}
           REGISTRY_PWD:  ${{ secrets.REGISTRY_PWD }}
 
-      - name: Set image filename output
-        id: set-name
-        run: |
-          IMAGE_ID="${{ secrets.DOCKER_USER }}/${{ github.event.repository.name }}"
-          IMAGE_ID=$(echo "$IMAGE_ID" | tr '[:upper:]' '[:lower:]')
-          VERSION="${GITHUB_REF#refs/tags/}"
-          FILE_NAME="$(echo "$IMAGE_ID" | tr '/:' '_')-$VERSION.tar"
-          echo "image_tar=$FILE_NAME" >> $GITHUB_OUTPUT
-
-      - name: Upload image tar
-        uses: actions/upload-artifact@v4
-        with:
-          name: docker-image-tar
-          path: ./${{ steps.set-name.outputs.image_tar }}
-          retention-days: 1
   tag-release:
     runs-on: ubuntu-24.04
     needs:
@@ -46,17 +29,11 @@ jobs:
     outputs:
       tag: ${{ steps.release.outputs.tag }}
 
-  registry_release:
+  registry-release:
     runs-on: ubuntu-24.04
     needs:
       - tag-release
     steps:
-      - name: Download image tar
-        uses: actions/download-artifact@v4
-        with:
-          name: docker-image-tar
-          path: .
-
       - name: Release image
         if: ${{ needs.tag-release.outputs.tag != '' }}
         uses: RedSockActions/release_image@v1.0.25
