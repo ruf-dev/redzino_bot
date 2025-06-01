@@ -8,7 +8,8 @@ on:
 jobs:
   image-build:
     runs-on: ubuntu-24.04
-    outputs: ${{ steps.set-name.outputs.image_tar }}
+    outputs:
+      image-tar-name: ${{ steps.set-name.outputs.image_tar }}
     steps:
       - name: image-build
         uses: RedSockActions/release_image@v1.0.23
