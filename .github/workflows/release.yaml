@@ -58,10 +58,10 @@ jobs:
           rm -rf /tmp/.buildx-cache
           mv /tmp/.buildx-cache-new /tmp/.buildx-cache
 
-announce:
-  needs: registry-release
-  runs-on: ubuntu-latest
-  steps:
-    - name: Print Docker Hub link
-      run: |
-        echo "Docker image: ${{ needs.registry-release.outputs.image-url }}"
+  announce:
+    needs: registry-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Docker Hub link
+        run: |
+          echo "Docker image: ${{ needs.registry-release.outputs.image-url }}"
