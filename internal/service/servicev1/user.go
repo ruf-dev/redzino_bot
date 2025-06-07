@@ -96,7 +96,7 @@ func (u *UserService) AccountDiceRoll(ctx context.Context, roll domain.DiceRoll)
 
 		if user.LuckyNumber == roll.Result {
 			change = diceMatchPrize
-			res = domain.DiceRollFailed
+			res = domain.DiceRollMatch
 		}
 
 		err = u.userStorage.ApplyBalanceChange(ctx, roll.TgId, change)
