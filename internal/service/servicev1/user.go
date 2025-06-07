@@ -91,13 +91,15 @@ func (u *UserService) AccountDiceRoll(ctx context.Context, roll domain.DiceRoll)
 			return rerrors.Wrap(err, "error getting user info from storage")
 		}
 
-		res = diceFailedPrice
+		res = domain.DiceRollFailed
+		change := diceFailedPrice
 
 		if user.LuckyNumber == roll.Result {
-			res = diceMatchPrize
+			change = diceMatchPrize
+			res = domain.DiceRollFailed
 		}
 
-		err = u.userStorage.ApplyBalanceChange(ctx, roll.TgId, int(res))
+		err = u.userStorage.ApplyBalanceChange(ctx, roll.TgId, change)
 		if err != nil {
 			return rerrors.Wrap(err, "error applying balance")
 		}

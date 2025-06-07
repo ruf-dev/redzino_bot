@@ -77,7 +77,10 @@ func (h *dicesHandler) handleDice(in *model.MessageIn, out tgapi.Chat) error {
 	}
 
 	if diceRes == domain.DiceRollMatch {
-		return out.SendMessage(response.NewMessage("Совпадение!"))
+		msg := response.NewMessage("Совпадение!")
+		msg.ReplyMessageId = int64(in.MessageID)
+
+		return out.SendMessage(msg)
 	}
 
 	return nil
