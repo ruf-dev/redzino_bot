@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 
+	errors "go.redsock.ru/rerrors"
+
 	"github.com/ruf-dev/redzino_bot/internal/clients/sqldb"
 	"github.com/ruf-dev/redzino_bot/internal/domain"
 	"github.com/ruf-dev/redzino_bot/internal/storage"
@@ -87,6 +89,42 @@ func (m *MotivationsProvider) PushToAllChats(ctx context.Context, motivation dom
 `, motivation.Id)
 	if err != nil {
 		return wrapPgError(err)
+	}
+
+	return nil
+}
+
+func (m *MotivationsProvider) RefreshChatsQueue(ctx context.Context, chatId int64) error {
+	q := `
+	WITH 
+	    _chats AS (
+		SELECT
+			tg_chat_id
+		FROM chats
+		WHERE NOT is_muted AND tg_chat_id = $1
+	),
+	    _set_sent_false AS (
+	        UPDATE motivation_queue
+	        SET is_sent = false
+			WHERE tg_chat_id = (SELECT tg_chat_id FROM _chats)
+	    ),
+		_motivation AS (
+			SELECT
+				id
+			from motivations
+	)
+	INSERT INTO motivation_queue
+	   SELECT
+		   c.tg_chat_id,
+		m.id,
+		false
+	   FROM _chats AS c, _motivation AS m
+	
+	ON CONFLICT (tg_chat_id, motivation_id) DO UPDATE SET is_sent = false`
+
+	_, err := m.db.ExecContext(ctx, q, chatId)
+	if err != nil {
+		return errors.Wrap(err)
 	}
 
 	return nil

@@ -63,12 +63,22 @@ func (m *MotivationService) Save(ctx context.Context, motivation domain.Motivati
 
 func (m *MotivationService) GetMotivation(ctx context.Context, chatId int64) (*domain.Motivation, error) {
 	motivation, err := m.motivationsStorage.PopForChat(ctx, chatId)
-	if err != nil {
-		if !rerrors.Is(err, storage.ErrNotFound) {
-			return nil, rerrors.Wrap(err)
-		}
+	if err == nil {
+		return &motivation, nil
+	}
 
-		return nil, nil
+	if !rerrors.Is(err, storage.ErrNotFound) {
+		return nil, rerrors.Wrap(err)
+	}
+
+	err = m.motivationsStorage.RefreshChatsQueue(ctx, chatId)
+	if err != nil {
+		return nil, rerrors.Wrap(err)
+	}
+
+	motivation, err = m.motivationsStorage.PopForChat(ctx, chatId)
+	if err != nil {
+		return nil, rerrors.Wrap(err)
 	}
 
 	return &motivation, nil

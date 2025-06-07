@@ -33,6 +33,7 @@ type Motivations interface {
 	Save(ctx context.Context, motivation *domain.Motivation) error
 	PopForChat(ctx context.Context, id int64) (domain.Motivation, error)
 	PushToAllChats(ctx context.Context, motivation domain.Motivation) error
+	RefreshChatsQueue(ctx context.Context, chatId int64) error
 
 	WithTx(tx *sql.Tx) Motivations
 }
