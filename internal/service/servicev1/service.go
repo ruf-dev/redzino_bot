@@ -16,10 +16,10 @@ func (s *Service) MotivationService() service.MotivationService {
 	return s.motivationService
 }
 
-func NewService(dataStorage storage.Data, manager *tx_manager.TxManager) *Service {
+func NewService(dataStorage storage.Data, txManager *tx_manager.TxManager) *Service {
 	return &Service{
-		userService:       NewUserService(dataStorage),
-		motivationService: NewMotivationService(dataStorage, manager),
+		userService:       NewUserService(dataStorage, txManager),
+		motivationService: NewMotivationService(dataStorage, txManager),
 		chatService:       NewChatService(dataStorage),
 	}
 }

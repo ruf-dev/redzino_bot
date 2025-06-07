@@ -42,13 +42,15 @@ func (p *UserProvider) Get(ctx context.Context, tgId int64) (user domain.User, e
 		SELECT
 		    tg_id,
 		    balance,
-		    permission_bit_map
+		    permission_bit_map,
+		    lucky_number
 		FROM users 
 		WHERE tg_id = $1`, tgId).
 		Scan(
 			&user.TgId,
 			&user.Balance,
 			&user.PermissionsBitMap,
+			&user.LuckyNumber,
 		)
 	if err != nil {
 		return user, rerrors.Wrap(err, "error reading user from database")
@@ -57,7 +59,7 @@ func (p *UserProvider) Get(ctx context.Context, tgId int64) (user domain.User, e
 	return user, nil
 }
 
-func (p *UserProvider) Inc(ctx context.Context, tgId int64, price int) error {
+func (p *UserProvider) ApplyBalanceChange(ctx context.Context, tgId int64, price int) error {
 	return p.updateBalance(ctx, tgId, price)
 }
 

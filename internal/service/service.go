@@ -15,7 +15,9 @@ type Service interface {
 type UserService interface {
 	InitUser(ctx context.Context, tgId int64) error
 	GetBalance(ctx context.Context, tgId int64) (domain.Balance, error)
-	AccountRoll(ctx context.Context, bc domain.BalanceChange) (err error)
+
+	AccountSlotSpin(ctx context.Context, bc domain.SlotsSpin) (err error)
+	AccountDiceRoll(ctx context.Context, bc domain.DiceRoll) (res domain.DiceResult, err error)
 }
 
 type MotivationService interface {

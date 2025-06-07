@@ -4,15 +4,27 @@ type Balance struct {
 	Total int64
 }
 
-type RollPrize int
+type SlotSpinResult int
 
 const (
-	RollPrizeUnLuck RollPrize = iota
-	RollPrizeFruit
-	RollPrizeJackpot
+	SpinSlotUnLuck SlotSpinResult = iota
+	SpinSlotFruit
+	SpinSlotJackpot
 )
 
-type BalanceChange struct {
-	TgId       int64
-	RollResult RollPrize
+type SlotsSpin struct {
+	TgId   int64
+	Result SlotSpinResult
 }
+
+type DiceRoll struct {
+	TgId   int64
+	Result int
+}
+
+type DiceResult int
+
+const (
+	DiceRollFailed DiceResult = iota
+	DiceRollMatch
+)

@@ -8,6 +8,7 @@ type User struct {
 	TgId              int64
 	Balance           int64
 	PermissionsBitMap int64
+	LuckyNumber       int
 }
 
 func (u User) HasPermission(perm permissions.Permission) bool {

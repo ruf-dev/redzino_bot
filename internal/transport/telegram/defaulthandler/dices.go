@@ -14,14 +14,14 @@ const (
 	jackpotVal = 64
 )
 
-func getPrice(val int) domain.RollPrize {
+func getSlotPrice(val int) domain.SlotSpinResult {
 	if val == jackpotVal {
-		return domain.RollPrizeJackpot
+		return domain.SpinSlotJackpot
 	}
 
 	if toolbox.Contains(fruitsVals, val) {
-		return domain.RollPrizeFruit
+		return domain.SpinSlotFruit
 	}
 
-	return domain.RollPrizeUnLuck
+	return domain.SpinSlotUnLuck
 }

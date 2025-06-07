@@ -2,26 +2,36 @@ package servicev1
 
 import (
 	"context"
+	"database/sql"
 
 	"go.redsock.ru/rerrors"
 
 	"github.com/ruf-dev/redzino_bot/internal/domain"
 	"github.com/ruf-dev/redzino_bot/internal/storage"
+	"github.com/ruf-dev/redzino_bot/internal/storage/tx_manager"
 )
 
 const (
 	defaultInitBalance = 50
-	fruitPrice         = 5
-	jackpotPrize       = 50
+
+	slotFruitPrize   = 25
+	slotJackpotPrize = 100
+	slotRollPrice    = -2
+
+	diceMatchPrize  = 12
+	diceFailedPrice = -2
 )
 
 type UserService struct {
 	userStorage storage.Users
+
+	txManager *tx_manager.TxManager
 }
 
-func NewUserService(data storage.Data) *UserService {
+func NewUserService(data storage.Data, txManager *tx_manager.TxManager) *UserService {
 	return &UserService{
 		userStorage: data.Users(),
+		txManager:   txManager,
 	}
 }
 
@@ -50,23 +60,50 @@ func (u *UserService) GetBalance(ctx context.Context, tgId int64) (domain.Balanc
 	return domain.Balance{Total: user.Balance}, nil
 }
 
-func (u *UserService) AccountRoll(ctx context.Context, bc domain.BalanceChange) (err error) {
-	switch bc.RollResult {
-	case domain.RollPrizeFruit:
-		err = u.userStorage.Inc(ctx, bc.TgId, fruitPrice)
-	case domain.RollPrizeJackpot:
-		err = u.userStorage.Inc(ctx, bc.TgId, jackpotPrize)
-	default:
-		err = u.userStorage.Decrease(ctx, bc.TgId)
-		if err != nil {
-			return rerrors.Wrap(err, "Luck returned back to you. Result wasn't accounted. Problem with database")
-		}
+func (u *UserService) AccountSlotSpin(ctx context.Context, spin domain.SlotsSpin) (err error) {
 
+	var balanceChange int
+
+	switch spin.Result {
+	case domain.SpinSlotFruit:
+		balanceChange = slotFruitPrize
+	case domain.SpinSlotJackpot:
+		balanceChange = slotJackpotPrize
+	default:
+		balanceChange = slotRollPrice
 	}
 
+	err = u.userStorage.ApplyBalanceChange(ctx, spin.TgId, balanceChange)
 	if err != nil {
 		return rerrors.Wrap(err, "sorry. Result wasn't accounted")
 	}
 
 	return nil
+}
+
+func (u *UserService) AccountDiceRoll(ctx context.Context, roll domain.DiceRoll) (res domain.DiceResult, err error) {
+	err = u.txManager.Execute(func(tx *sql.Tx) error {
+		userStorage := u.userStorage.WithTx(tx)
+
+		var user domain.User
+		user, err = userStorage.Get(ctx, roll.TgId)
+		if err != nil {
+			return rerrors.Wrap(err, "error getting user info from storage")
+		}
+
+		res = diceFailedPrice
+
+		if user.LuckyNumber == roll.Result {
+			res = diceMatchPrize
+		}
+
+		err = u.userStorage.ApplyBalanceChange(ctx, roll.TgId, int(res))
+		if err != nil {
+			return rerrors.Wrap(err, "error applying balance")
+		}
+
+		return nil
+	})
+
+	return res, nil
 }
