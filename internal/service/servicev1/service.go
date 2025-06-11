@@ -7,9 +7,10 @@ import (
 )
 
 type Service struct {
-	userService       *UserService
-	motivationService *MotivationService
-	chatService       *ChatService
+	userService            *UserService
+	motivationService      *MotivationService
+	chatService            *ChatService
+	dailyActivitiesService *DailyActivitiesService
 }
 
 func (s *Service) MotivationService() service.MotivationService {
@@ -18,9 +19,10 @@ func (s *Service) MotivationService() service.MotivationService {
 
 func NewService(dataStorage storage.Data, txManager *tx_manager.TxManager) *Service {
 	return &Service{
-		userService:       NewUserService(dataStorage, txManager),
-		motivationService: NewMotivationService(dataStorage, txManager),
-		chatService:       NewChatService(dataStorage),
+		userService:            NewUserService(dataStorage, txManager),
+		motivationService:      NewMotivationService(dataStorage, txManager),
+		chatService:            NewChatService(dataStorage),
+		dailyActivitiesService: NewDailyActivitiesService(txManager, dataStorage),
 	}
 }
 
@@ -30,4 +32,8 @@ func (s *Service) UserService() service.UserService {
 
 func (s *Service) ChatService() service.ChatService {
 	return s.chatService
+}
+
+func (s *Service) DailyActivitiesService() service.DailyActivitiesService {
+	return s.dailyActivitiesService
 }

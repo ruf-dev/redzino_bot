@@ -10,6 +10,7 @@ type Service interface {
 	UserService() UserService
 	MotivationService() MotivationService
 	ChatService() ChatService
+	DailyActivitiesService() DailyActivitiesService
 }
 
 type UserService interface {
@@ -29,4 +30,8 @@ type ChatService interface {
 	InitChat(ctx context.Context, chatId int64) error
 	ToggleMute(ctx context.Context, id int64) error
 	GetChat(ctx context.Context, chatId int64) (*domain.Chat, error)
+}
+
+type DailyActivitiesService interface {
+	Goyda(ctx context.Context, userId int64) (domain.GoydaResponse, error)
 }

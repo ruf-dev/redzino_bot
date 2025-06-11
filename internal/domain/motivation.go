@@ -5,3 +5,8 @@ type Motivation struct {
 	AuthorTgId int64
 	TgFileId   string
 }
+
+type GoydaResponse struct {
+	TgFileId       *string
+	ChipsAccounted bool
+}

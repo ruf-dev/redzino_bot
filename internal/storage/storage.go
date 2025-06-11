@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"go.redsock.ru/rerrors"
 
@@ -18,6 +19,7 @@ type Data interface {
 	Motivations() Motivations
 	Chats() Chats
 	ScheduledMessages() ScheduledMessages
+	DailyActivities() DailyActivities
 
 	WithTx(tx *sql.Tx) Data
 }
@@ -52,4 +54,11 @@ type ScheduledMessages interface {
 	MarkMessage(ctx context.Context, id int64, state domain.ScheduledMessageState) error
 
 	WithTx(tx *sql.Tx) ScheduledMessages
+}
+
+type DailyActivities interface {
+	LastGoyda(ctx context.Context, userId int64) (time.Time, error)
+	AccountGoyda(ctx context.Context, userId int64, t time.Time) error
+
+	WithTx(tx *sql.Tx) DailyActivities
 }
