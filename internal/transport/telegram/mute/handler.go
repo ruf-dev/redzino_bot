@@ -20,7 +20,7 @@ func New(srv service.Service) *Handler {
 	}
 }
 
-func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
+func (h *Handler) Handle(in *model.MessageIn, _ tgapi.Chat) error {
 	err := h.chatService.ToggleMute(in.Ctx, in.Chat.ID)
 	if err != nil {
 		return rerrors.Wrap(err, "error when getting motivation")
@@ -29,9 +29,9 @@ func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
 	return nil
 }
 
-//func (h *Handler) GetDescription() string {
-//	return "Включить/выключить оповещения"
-//}
+func (h *Handler) GetDescription() string {
+	return "Включить/выключить оповещения"
+}
 
 func (h *Handler) GetCommand() string {
 	return Command

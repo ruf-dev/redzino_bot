@@ -6,6 +6,10 @@ package app
 import (
 	"context"
 
+	errors "go.redsock.ru/rerrors"
+	"golang.org/x/sync/errgroup"
+
+	"github.com/ruf-dev/redzino_bot/internal/cron"
 	"github.com/ruf-dev/redzino_bot/internal/service"
 	"github.com/ruf-dev/redzino_bot/internal/service/servicev1"
 	"github.com/ruf-dev/redzino_bot/internal/storage"
@@ -18,6 +22,8 @@ type Custom struct {
 	db  storage.Data
 	srv service.Service
 
+	messageSenderCron cron.MessageSenderCron
+
 	tg *telegram.Server
 }
 
@@ -28,6 +34,8 @@ func (c *Custom) Init(a *App) error {
 
 	c.srv = servicev1.NewService(c.db, txManager)
 
+	c.messageSenderCron = cron.NewMessageSender(c.db, a.Telegram)
+
 	c.tg = telegram.NewServer(a.Cfg, a.Telegram, c.srv)
 	return nil
 }
@@ -35,11 +43,37 @@ func (c *Custom) Init(a *App) error {
 // Start - launch custom handlers
 // Even if you won't use it keep it for proper work
 func (c *Custom) Start(ctx context.Context) error {
-	return c.tg.Start(ctx)
+	eg, ctx := errgroup.WithContext(ctx)
+	eg.Go(func() error {
+		return c.tg.Start(ctx)
+	})
+
+	eg.Go(func() error {
+		c.messageSenderCron.Start(ctx)
+		return nil
+	})
+
+	err := eg.Wait()
+	if err != nil {
+		return errors.Wrap(err)
+	}
+
+	return nil
 }
 
 // Stop - gracefully stop custom handlers
 // Even if you won't use it keep it for proper work
 func (c *Custom) Stop() error {
-	return c.tg.Stop(nil)
+
+	eg := errgroup.Group{}
+	eg.Go(func() error {
+		return c.tg.Stop(nil)
+	})
+
+	err := eg.Wait()
+	if err != nil {
+		return errors.Wrap(err)
+	}
+
+	return nil
 }

@@ -8,16 +8,18 @@ import (
 )
 
 type Provider struct {
-	users       *UserProvider
-	motivations *MotivationsProvider
-	chats       *ChatsProvider
+	users             *UserProvider
+	motivations       *MotivationsProvider
+	chats             *ChatsProvider
+	scheduledMessages *ScheduledMessagesProvider
 }
 
 func NewProvider(db sqldb.DB) *Provider {
 	return &Provider{
-		users:       NewUserProvider(db),
-		motivations: NewMotivationsProvider(db),
-		chats:       NewChatsProvider(db),
+		users:             NewUserProvider(db),
+		motivations:       NewMotivationsProvider(db),
+		chats:             NewChatsProvider(db),
+		scheduledMessages: NewScheduledMessages(db),
 	}
 }
 
@@ -27,6 +29,10 @@ func (p *Provider) Users() storage.Users {
 
 func (p *Provider) Motivations() storage.Motivations {
 	return p.motivations
+}
+
+func (p *Provider) ScheduledMessages() storage.ScheduledMessages {
+	return p.scheduledMessages
 }
 
 func (p *Provider) Chats() storage.Chats {

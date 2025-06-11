@@ -17,6 +17,7 @@ type Data interface {
 	Users() Users
 	Motivations() Motivations
 	Chats() Chats
+	ScheduledMessages() ScheduledMessages
 
 	WithTx(tx *sql.Tx) Data
 }
@@ -44,4 +45,11 @@ type Chats interface {
 	ToggleMute(ctx context.Context, id int64) error
 
 	WithTx(tx *sql.Tx) Chats
+}
+
+type ScheduledMessages interface {
+	GetBatchForSending(ctx context.Context, batchSize int) ([]domain.ScheduledMessage, error)
+	MarkMessage(ctx context.Context, id int64, state domain.ScheduledMessageState) error
+
+	WithTx(tx *sql.Tx) ScheduledMessages
 }
