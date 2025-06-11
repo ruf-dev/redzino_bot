@@ -14,7 +14,7 @@ type Service interface {
 }
 
 type UserService interface {
-	InitUser(ctx context.Context, tgId int64) error
+	InitUser(ctx context.Context, user domain.User) error
 	GetBalance(ctx context.Context, tgId int64) (domain.Balance, error)
 
 	AccountSlotSpin(ctx context.Context, bc domain.SlotsSpin) (err error)
@@ -27,7 +27,7 @@ type MotivationService interface {
 }
 
 type ChatService interface {
-	InitChat(ctx context.Context, chatId int64) error
+	InitChat(ctx context.Context, chat domain.Chat) error
 	ToggleMute(ctx context.Context, id int64) error
 	GetChat(ctx context.Context, chatId int64) (*domain.Chat, error)
 }

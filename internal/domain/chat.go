@@ -5,7 +5,8 @@ import (
 )
 
 type Chat struct {
-	TgId int64
+	TgId  int64
+	Title string
 
 	LastMotivation time.Time
 	IsMuted        bool

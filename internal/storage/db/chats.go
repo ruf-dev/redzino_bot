@@ -22,10 +22,10 @@ func NewChatsProvider(db sqldb.DB) *ChatsProvider {
 func (c *ChatsProvider) Create(ctx context.Context, data domain.Chat) error {
 	_, err := c.db.ExecContext(ctx, `
 		INSERT INTO chats 
-		    	(tg_chat_id, last_motivation, is_muted)  
-		VALUES  (        $1,              $2,       $3)
-		ON CONFLICT(tg_chat_id) DO NOTHING
-`, data.TgId, data.LastMotivation, data.IsMuted)
+		    	(tg_chat_id, title)  
+		VALUES  (        $1,    $2)
+		ON CONFLICT(tg_chat_id) DO UPDATE SET title = excluded.title
+`, data.TgId, data.Title)
 	if err != nil {
 		return wrapPgError(err)
 	}

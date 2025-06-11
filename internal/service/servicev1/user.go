@@ -35,11 +35,8 @@ func NewUserService(data storage.Data, txManager *tx_manager.TxManager) *UserSer
 	}
 }
 
-func (u *UserService) InitUser(ctx context.Context, tgId int64) error {
-	user := domain.User{
-		TgId:    tgId,
-		Balance: defaultInitBalance,
-	}
+func (u *UserService) InitUser(ctx context.Context, user domain.User) error {
+	user.Balance = defaultInitBalance
 
 	user, err := u.userStorage.Create(ctx, user)
 	if err != nil {
@@ -48,6 +45,9 @@ func (u *UserService) InitUser(ctx context.Context, tgId int64) error {
 		}
 	}
 
+	if err != nil {
+		return rerrors.Wrap(err)
+	}
 	return nil
 }
 

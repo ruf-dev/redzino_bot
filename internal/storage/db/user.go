@@ -24,11 +24,12 @@ func NewUserProvider(db sqldb.DB) *UserProvider {
 func (p *UserProvider) Create(ctx context.Context, data domain.User) (out domain.User, err error) {
 	err = p.db.QueryRowContext(ctx, `
 		INSERT INTO users 
-			   (tg_id, balance)
-		VALUES (   $1,      $2)
+			   (tg_id, username, balance)
+		VALUES (   $1,      $2,       $3)
 		ON CONFLICT(tg_id)
-		DO UPDATE SET tg_id = excluded.tg_id
-		RETURNING tg_id`, data.TgId, data.Balance).
+		DO UPDATE 
+		SET username = excluded.username
+		RETURNING tg_id`, data.TgId, data.UserName, data.Balance).
 		Scan(&out.TgId)
 	if err != nil {
 		return out, wrapPgError(err)

@@ -8,8 +8,10 @@ import (
 	"github.com/Red-Sock/go_tg/model"
 	"github.com/sirupsen/logrus"
 	"go.redsock.ru/rerrors"
+	"go.redsock.ru/toolbox"
 
 	"github.com/ruf-dev/redzino_bot/internal/config"
+	"github.com/ruf-dev/redzino_bot/internal/domain"
 	"github.com/ruf-dev/redzino_bot/internal/service"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/balance"
 	"github.com/ruf-dev/redzino_bot/internal/transport/telegram/defaulthandler"
@@ -38,7 +40,12 @@ func NewServer(cfg config.Config, bot *client.Bot, srv service.Service) (s *Serv
 
 			if !uc.exists(in.From.ID) {
 
-				err := srv.UserService().InitUser(in.Ctx, in.From.ID)
+				u := domain.User{
+					TgId:     in.From.ID,
+					UserName: in.From.UserName,
+				}
+
+				err := srv.UserService().InitUser(in.Ctx, u)
 				if err != nil {
 					logrus.Error(rerrors.Wrap(err, "error initializing user"))
 					return in.Ctx
@@ -48,7 +55,12 @@ func NewServer(cfg config.Config, bot *client.Bot, srv service.Service) (s *Serv
 			}
 
 			if !chatCache.exists(in.Chat.ID) {
-				err := srv.ChatService().InitChat(in.Ctx, in.Chat.ID)
+				chat := domain.Chat{
+					TgId:  in.Chat.ID,
+					Title: toolbox.Coalesce(in.Chat.Title, "dm:"+in.From.UserName),
+				}
+
+				err := srv.ChatService().InitChat(in.Ctx, chat)
 				if err != nil {
 					logrus.Error(rerrors.Wrap(err, "error initializing chat"))
 					return in.Ctx
@@ -87,9 +99,11 @@ type userCache[T comparable, V any] struct {
 }
 
 func newCache[T comparable, V any]() *userCache[T, V] {
-	return &userCache[T, V]{
+	c := &userCache[T, V]{
 		users: make(map[T]V),
 	}
+
+	return c
 }
 
 func (uc *userCache[T, V]) add(k T, v V) {

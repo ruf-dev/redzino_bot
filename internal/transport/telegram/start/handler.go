@@ -4,7 +4,6 @@ import (
 	tgapi "github.com/Red-Sock/go_tg/interfaces"
 	"github.com/Red-Sock/go_tg/model"
 	"github.com/Red-Sock/go_tg/model/response"
-	"go.redsock.ru/rerrors"
 
 	"github.com/ruf-dev/redzino_bot/internal/service"
 )
@@ -22,12 +21,8 @@ func New(srv service.Service) *Handler {
 }
 
 func (h *Handler) Handle(in *model.MessageIn, out tgapi.Chat) error {
-	err := h.userService.InitUser(in.Ctx, in.From.ID)
-	if err != nil {
-		return rerrors.Wrap(err, "error creating user")
-	}
-
-	return out.SendMessage(response.NewMessage("Здарова, заебал 💸💸💸"))
+	return out.SendMessage(response.NewMessage("Привет! Это бот Луданхамон Первый! " +
+		"Тут можно заработать фишек. Присылай смайлик игрового автомата - 🎰 или костей - 🎲 и выигрывай "))
 }
 
 func (h *Handler) GetCommand() string {

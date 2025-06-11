@@ -2,7 +2,6 @@ package servicev1
 
 import (
 	"context"
-	"time"
 
 	"go.redsock.ru/rerrors"
 
@@ -20,13 +19,7 @@ func NewChatService(data storage.Data) *ChatService {
 	}
 }
 
-func (c *ChatService) InitChat(ctx context.Context, chatId int64) error {
-	chat := domain.Chat{
-		TgId:           chatId,
-		LastMotivation: time.Time{},
-		IsMuted:        false,
-	}
-
+func (c *ChatService) InitChat(ctx context.Context, chat domain.Chat) error {
 	err := c.chatStorage.Create(ctx, chat)
 	if err != nil {
 		return rerrors.Wrap(err)

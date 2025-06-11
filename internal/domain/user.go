@@ -5,7 +5,9 @@ import (
 )
 
 type User struct {
-	TgId              int64
+	TgId     int64
+	UserName string
+
 	Balance           int64
 	PermissionsBitMap int64
 	LuckyNumber       int
