@@ -14,16 +14,13 @@ import (
 const (
 	defaultInitBalance = 50
 
-	slotFruitPrize   = 25
-	slotJackpotPrize = 100
-	slotRollPrice    = -2
-
 	diceMatchPrize  = 12
 	diceFailedPrice = -2
 )
 
 type UserService struct {
 	userStorage storage.Users
+	settings    storage.Settings
 
 	txManager *tx_manager.TxManager
 }
@@ -31,7 +28,9 @@ type UserService struct {
 func NewUserService(data storage.Data, txManager *tx_manager.TxManager) *UserService {
 	return &UserService{
 		userStorage: data.Users(),
-		txManager:   txManager,
+		settings:    data.Settings(),
+
+		txManager: txManager,
 	}
 }
 
@@ -63,14 +62,14 @@ func (u *UserService) GetBalance(ctx context.Context, tgId int64) (domain.Balanc
 func (u *UserService) AccountSlotSpin(ctx context.Context, spin domain.SlotsSpin) (err error) {
 
 	var balanceChange int
-
+	settings := u.settings.SlotMachine()
 	switch spin.Result {
 	case domain.SpinSlotFruit:
-		balanceChange = slotFruitPrize
+		balanceChange = settings.RollFruitPrize
 	case domain.SpinSlotJackpot:
-		balanceChange = slotJackpotPrize
+		balanceChange = settings.RollJackpotPrize
 	default:
-		balanceChange = slotRollPrice
+		balanceChange = settings.RollCost
 	}
 
 	err = u.userStorage.ApplyBalanceChange(ctx, spin.TgId, balanceChange)
@@ -82,6 +81,8 @@ func (u *UserService) AccountSlotSpin(ctx context.Context, spin domain.SlotsSpin
 }
 
 func (u *UserService) AccountDiceRoll(ctx context.Context, roll domain.DiceRoll) (res domain.DiceResult, err error) {
+	settings := u.settings.Dice()
+
 	err = u.txManager.Execute(func(tx *sql.Tx) error {
 		userStorage := u.userStorage.WithTx(tx)
 
@@ -92,10 +93,10 @@ func (u *UserService) AccountDiceRoll(ctx context.Context, roll domain.DiceRoll)
 		}
 
 		res = domain.DiceRollFailed
-		change := diceFailedPrice
+		change := settings.DiceCost
 
 		if user.LuckyNumber == roll.Result {
-			change = diceMatchPrize
+			change = settings.DiceWin
 			res = domain.DiceRollMatch
 		}
 

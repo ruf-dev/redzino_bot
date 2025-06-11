@@ -21,6 +21,8 @@ type Data interface {
 	ScheduledMessages() ScheduledMessages
 	DailyActivities() DailyActivities
 
+	Settings() Settings
+
 	WithTx(tx *sql.Tx) Data
 }
 
@@ -61,4 +63,11 @@ type DailyActivities interface {
 	AccountGoyda(ctx context.Context, userId int64, t time.Time) error
 
 	WithTx(tx *sql.Tx) DailyActivities
+}
+
+type Settings interface {
+	Fetch(ctx context.Context) (domain.Settings, error)
+
+	SlotMachine() domain.SlotMachineSettings
+	Dice() domain.DiceSettings
 }

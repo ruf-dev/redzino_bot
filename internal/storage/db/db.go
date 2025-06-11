@@ -13,6 +13,7 @@ type Provider struct {
 	chats             *ChatsProvider
 	scheduledMessages *ScheduledMessagesProvider
 	dailyActivities   *DailyActivitiesProvider
+	settings          *SettingsProvider
 }
 
 func NewProvider(db sqldb.DB) *Provider {
@@ -22,6 +23,7 @@ func NewProvider(db sqldb.DB) *Provider {
 		chats:             NewChatsProvider(db),
 		scheduledMessages: NewScheduledMessages(db),
 		dailyActivities:   NewDailyActivitiesProvider(db),
+		settings:          NewSettingsProvider(db),
 	}
 }
 
@@ -43,6 +45,10 @@ func (p *Provider) Chats() storage.Chats {
 
 func (p *Provider) DailyActivities() storage.DailyActivities {
 	return p.dailyActivities
+}
+
+func (p *Provider) Settings() storage.Settings {
+	return p.settings
 }
 
 func (p *Provider) WithTx(tx *sql.Tx) storage.Data {
