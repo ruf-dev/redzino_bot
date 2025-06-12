@@ -38,17 +38,19 @@ func (h *dicesHandler) handleSlots(in *model.MessageIn, out tgapi.Chat) error {
 		Result: getSlotPrice(in.Dice.Value),
 	}
 
-	err := h.userService.AccountSlotSpin(in.Ctx, spin)
+	res, err := h.userService.AccountSlotSpin(in.Ctx, spin)
 	if err != nil {
 		return rerrors.Wrap(err)
 	}
 
 	var messageOut *response.MessageOut
 
-	switch spin.Result {
-	case domain.SpinSlotJackpot:
+	switch {
+	case res.IsNotEnoughBalance:
+		messageOut = response.NewMessage("Закон Ома: Нету денег - сиди дома!")
+	case spin.Result == domain.SpinSlotJackpot:
 		messageOut = response.NewMessage("Грабанул, красавчик!")
-	case domain.SpinSlotFruit:
+	case spin.Result == domain.SpinSlotFruit:
 		messageOut = response.NewMessage("Лови фруктик")
 	default:
 		return nil

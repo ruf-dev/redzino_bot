@@ -14,7 +14,7 @@ const (
 	jackpotVal = 64
 )
 
-func getSlotPrice(val int) domain.SlotSpinResult {
+func getSlotPrice(val int) domain.SlotValue {
 	if val == jackpotVal {
 		return domain.SpinSlotJackpot
 	}

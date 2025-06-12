@@ -17,7 +17,7 @@ type UserService interface {
 	InitUser(ctx context.Context, user domain.User) error
 	GetBalance(ctx context.Context, tgId int64) (domain.Balance, error)
 
-	AccountSlotSpin(ctx context.Context, bc domain.SlotsSpin) (err error)
+	AccountSlotSpin(ctx context.Context, bc domain.SlotsSpin) (res domain.SlotSpinResult, err error)
 	AccountDiceRoll(ctx context.Context, bc domain.DiceRoll) (res domain.DiceResult, err error)
 }
 

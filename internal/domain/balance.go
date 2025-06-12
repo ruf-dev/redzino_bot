@@ -4,17 +4,21 @@ type Balance struct {
 	Total int64
 }
 
-type SlotSpinResult int
+type SlotValue int
 
 const (
-	SpinSlotUnLuck SlotSpinResult = iota
+	SpinSlotUnLuck SlotValue = iota
 	SpinSlotFruit
 	SpinSlotJackpot
 )
 
 type SlotsSpin struct {
 	TgId   int64
-	Result SlotSpinResult
+	Result SlotValue
+}
+
+type SlotSpinResult struct {
+	IsNotEnoughBalance bool
 }
 
 type DiceRoll struct {

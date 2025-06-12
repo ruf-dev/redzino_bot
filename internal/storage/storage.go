@@ -28,7 +28,7 @@ type Data interface {
 
 type Users interface {
 	Create(ctx context.Context, data domain.User) (domain.User, error)
-	Get(ctx context.Context, tgId int64) (domain.User, error)
+	Get(ctx context.Context, tgId int64, opt ...Opt) (domain.User, error)
 	ApplyBalanceChange(ctx context.Context, id int64, price int) error
 
 	WithTx(tx *sql.Tx) Users
@@ -70,4 +70,8 @@ type Settings interface {
 
 	SlotMachine() domain.SlotMachineSettings
 	Dice() domain.DiceSettings
+}
+
+type Opt struct {
+	ForUpdate bool
 }

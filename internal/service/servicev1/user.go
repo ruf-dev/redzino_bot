@@ -59,25 +59,44 @@ func (u *UserService) GetBalance(ctx context.Context, tgId int64) (domain.Balanc
 	return domain.Balance{Total: user.Balance}, nil
 }
 
-func (u *UserService) AccountSlotSpin(ctx context.Context, spin domain.SlotsSpin) (err error) {
-
-	var balanceChange int
+func (u *UserService) AccountSlotSpin(ctx context.Context, spin domain.SlotsSpin) (result domain.SlotSpinResult, err error) {
 	settings := u.settings.SlotMachine()
-	switch spin.Result {
-	case domain.SpinSlotFruit:
-		balanceChange = settings.RollFruitPrize
-	case domain.SpinSlotJackpot:
-		balanceChange = settings.RollJackpotPrize
-	default:
-		balanceChange = settings.RollCost
-	}
 
-	err = u.userStorage.ApplyBalanceChange(ctx, spin.TgId, balanceChange)
+	err = u.txManager.Execute(func(tx *sql.Tx) error {
+		opt := storage.Opt{ForUpdate: true}
+
+		user, err := u.userStorage.Get(ctx, spin.TgId, opt)
+		if err != nil {
+			return rerrors.Wrap(err)
+		}
+
+		if user.Balance+int64(settings.RollCost) <= 0 {
+			result.IsNotEnoughBalance = true
+			return nil
+		}
+
+		var balanceChange int
+		switch spin.Result {
+		case domain.SpinSlotFruit:
+			balanceChange = settings.RollFruitPrize
+		case domain.SpinSlotJackpot:
+			balanceChange = settings.RollJackpotPrize
+		default:
+			balanceChange = settings.RollCost
+		}
+
+		err = u.userStorage.ApplyBalanceChange(ctx, spin.TgId, balanceChange)
+		if err != nil {
+			return rerrors.Wrap(err, "sorry. Result wasn't accounted")
+		}
+
+		return nil
+	})
 	if err != nil {
-		return rerrors.Wrap(err, "sorry. Result wasn't accounted")
+		return result, rerrors.Wrap(err)
 	}
 
-	return nil
+	return result, nil
 }
 
 func (u *UserService) AccountDiceRoll(ctx context.Context, roll domain.DiceRoll) (res domain.DiceResult, err error) {

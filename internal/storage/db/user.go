@@ -38,15 +38,23 @@ func (p *UserProvider) Create(ctx context.Context, data domain.User) (out domain
 	return out, nil
 }
 
-func (p *UserProvider) Get(ctx context.Context, tgId int64) (user domain.User, err error) {
-	err = p.db.QueryRowContext(ctx, `
+func (p *UserProvider) Get(ctx context.Context, tgId int64, opt ...storage.Opt) (user domain.User, err error) {
+	q := `
 		SELECT
 		    tg_id,
 		    balance,
 		    permission_bit_map,
 		    lucky_number
 		FROM users 
-		WHERE tg_id = $1`, tgId).
+		WHERE tg_id = $1
+		`
+
+	if len(opt) > 0 && opt[0].ForUpdate {
+		q += `
+		FOR UPDATE`
+	}
+
+	err = p.db.QueryRowContext(ctx, q, tgId).
 		Scan(
 			&user.TgId,
 			&user.Balance,
