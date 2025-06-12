@@ -98,11 +98,11 @@ func (h *Handler) handleGoyda(in *model.MessageIn, out tgapi.Chat) error {
 	if goydaResp.TgFileId != nil {
 		msg = response.NewMessage("",
 			response.WithMedia(media.Video{
-				Caption: "ГОЙДА БРАТЬЯ!",
+				Caption: "",
 				FileID:  *goydaResp.TgFileId,
 			}))
 	} else {
-		m := response.NewMessage("Видео нет, но баллы начислены")
+		m := response.NewMessage("ГОЙДА БРАТЬЯ! Держи фишки") //"Видео нет, но баллы начислены")
 		if !goydaResp.ChipsAccounted {
 			m.Text = "На сегодня гойды хватит. Крути и приходи завтра"
 		}
